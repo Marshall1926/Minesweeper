@@ -1,0 +1,167 @@
+// ConsoleApplication2.cpp
+
+#include <iostream>
+using namespace std;
+int const boxSize = 5;
+int tGrid[boxSize][boxSize];
+bool playing = 1;
+int const numberOfBombs = 5;
+int turns = 1;
+
+// Shows the grid on screen and an X for user finding no bomb and a b for finding a bomb
+void printGrid()
+{
+    for (int j = boxSize - 1; j >= 0; j--) //move from row to row
+    {
+        for (int i = 0; i < boxSize; i++) //each row
+        {
+         
+            if (tGrid[i][j] == boxSize - 1)
+            {
+                cout << " ";
+            } 
+            else if (tGrid[i][j] == 2)
+            {
+                cout << "X ";
+            }
+            else if(tGrid[i][j] == 5)
+            {
+                cout << "b ";
+            }
+            else 
+            {
+                cout << "  ";
+            }
+            //draws the vertical lines
+            if (i < boxSize - 1)
+            {
+                cout << "| ";
+            }
+        }
+        cout << endl;
+
+        if (j > 0)
+        {
+            cout << "------------------ " << endl; //3 more than the 3*# of boxes 
+        }
+    }
+    return;
+
+}
+
+//randomly places a number of bombs
+void bombPlacer()
+{
+    
+
+    for (int i = 0; i < numberOfBombs; i++)
+    {
+        while (true)
+        {
+            int bombX = rand() % boxSize;
+            int bombY = rand() % boxSize;
+
+            // if there is not already a bomb in the spot place one there
+            if (tGrid[bombX][bombY] != 10)
+            {
+
+                tGrid[bombX][bombY] = 10; // Places a bomb in that square
+                break;
+            }
+
+        }
+    }
+
+}
+
+//Player chooses a spot to check for a bomb
+void playerMove()
+{
+    int userX = 0, userY = 0;
+
+    //Enter Player Move
+    cout << "\n\n Enter your coordinates with the bottom left (0,0) and the top right (4,4). \nEnter your X coordinate:  ";
+    cin >> userX;
+    cout << "\nEnter your Y coordinate:  ";
+    cin >> userY;
+
+    //check if space was already checked
+
+    if(tGrid[userX][userY] == 2)
+    {
+        cout << "This spot has already been checked\n";
+    }
+    //check if user entry is bomb
+    else if (tGrid[userX][userY] == 10)
+    {
+        cout << "You blew up!\n";
+        tGrid[userX][userY] = 5;
+        playing = 0;
+
+    }  
+    else
+    {
+        cout << "There is not a bomb here\n";
+        tGrid[userX][userY] = 2;
+        turns++;
+    }
+
+
+    printGrid();
+
+}
+
+
+int main()
+{
+    unsigned int seedtime = static_cast<unsigned int>(time(NULL));
+    srand(seedtime);
+
+    // sets all  boxes to 0
+    for (int i = 0; i < boxSize; i++)
+    {
+        for (int j = 0; j < boxSize; j++)
+        {
+            tGrid[i][j] = 0;
+        }
+
+    }
+
+    cout << "Welcome to Minesweeper!\n";
+
+    bombPlacer();
+    printGrid();
+   
+
+    while (playing)
+    {
+        
+        //User inputs and x and a y value as coordinates
+        cout << "Turn Number: " << turns << endl;
+        playerMove();
+        
+
+        if(turns == 6)
+        {
+            cout << "You survived!\n"; 
+            //Show all the bombs
+            for (int i = 0; i < boxSize; i++)
+            {
+                for (int j = 0; j < boxSize; j++)
+                {
+
+                    if (tGrid[i][j] == 10)
+                    {
+                        tGrid[i][j] = 5;
+                    }
+                }
+
+            }
+
+            printGrid();
+            playing = 0;
+        }
+    }
+
+    return 0;
+}
